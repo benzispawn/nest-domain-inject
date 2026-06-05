@@ -51,11 +51,20 @@ export class UsersController extends DomainBase<UsersDomain> {
 Register the module:
 
 ```ts
+const USER_REPOSITORY = Symbol('USER_REPOSITORY');
+
 DomainModule.register({
   configs: [usersDomainConfig],
-  providers: {
+  providers: [
+    UserService,
+    {
+      provide: USER_REPOSITORY,
+      useClass: UserRepository,
+    },
+  ],
+  providerTokens: {
     'user.service': UserService,
-    'user.repository': UserRepository,
+    'user.repository': USER_REPOSITORY,
   },
 });
 ```
@@ -65,11 +74,59 @@ DomainModule.register({
 - Use multiple contexts by adding multiple configs.
 - Tokens are deterministic: `DOMAIN:{context}:{type}:{name}`.
 - Each inject item aliases a domain token to a provider using `useExisting`.
+- Use `imports` when a provider comes from another Nest module, including modules
+  created with `register()` or `registerAsync()`.
+- Use `providerTokens` to map each domain `providerKey` to the Nest injection
+  token that should be aliased.
 
 Example token values:
 
 - `DOMAIN:users:service:user`
 - `DOMAIN:users:repository:user`
+
+### Dynamic Module Providers
+
+When a dependency is exported by a configured module, import that module through
+`DomainModule.register()` and point `providerTokens` to the exported token:
+
+```ts
+const USER_REPOSITORY = Symbol('USER_REPOSITORY');
+
+DomainModule.register({
+  configs: [usersDomainConfig],
+  imports: [
+    UsersDataModule.register({
+      defaultName: 'Ada Lovelace',
+    }),
+  ],
+  providers: [UserService],
+  providerTokens: {
+    'user.service': UserService,
+    'user.repository': USER_REPOSITORY,
+  },
+});
+```
+
+`UsersDataModule` must export `USER_REPOSITORY` for the alias provider to
+resolve it.
+
+### Legacy Provider Map
+
+The original provider-map shorthand is still supported:
+
+```ts
+DomainModule.register({
+  configs: [usersDomainConfig],
+  providers: {
+    'user.service': UserService,
+    'user.repository': UserRepository,
+  },
+});
+```
+
+This shorthand registers each class provider and uses the same value as the
+alias token. Prefer `providerTokens` for symbols, strings, factory providers,
+or providers exported by imported modules.
 
 ## Decorator Execution Tradeoff
 

@@ -3,6 +3,8 @@ import { parseDomainModuleOptions } from '../../src/domain-config.parser';
 class UserService {}
 class UserRepository {}
 
+const USER_REPOSITORY = Symbol('USER_REPOSITORY');
+
 describe('parseDomainModuleOptions', () => {
   it('parses a valid configuration', () => {
     const parsed = parseDomainModuleOptions({
@@ -32,8 +34,47 @@ describe('parseDomainModuleOptions', () => {
     });
 
     expect(parsed.configs).toHaveLength(1);
-    expect(parsed.providers['user.service']).toBe(UserService);
-    expect(parsed.providers['user.repository']).toBe(UserRepository);
+    expect(parsed.providers).toEqual([UserService, UserRepository]);
+    expect(parsed.providerTokens['user.service']).toBe(UserService);
+    expect(parsed.providerTokens['user.repository']).toBe(UserRepository);
+  });
+
+  it('parses explicit providers separately from provider tokens', () => {
+    const repositoryProvider = {
+      provide: USER_REPOSITORY,
+      useValue: new UserRepository(),
+    };
+
+    const parsed = parseDomainModuleOptions({
+      configs: [
+        {
+          context: 'users',
+          inject: [
+            {
+              type: 'service',
+              name: 'user',
+              property: 'userService',
+              providerKey: 'user.service',
+            },
+            {
+              type: 'repository',
+              name: 'user',
+              property: 'userRepository',
+              providerKey: 'user.repository',
+            },
+          ],
+        },
+      ],
+      providers: [UserService, repositoryProvider],
+      providerTokens: {
+        'user.service': UserService,
+        'user.repository': USER_REPOSITORY,
+      },
+    });
+
+    expect(parsed.providers).toEqual([UserService, repositoryProvider]);
+    expect(parsed.providerTokens['user.service']).toBe(UserService);
+    expect(parsed.providerTokens['user.repository']).toBe(USER_REPOSITORY);
   });
 
   it('fails when contexts are duplicated', () => {
@@ -119,6 +160,6 @@ describe('parseDomainModuleOptions', () => {
         ],
         providers: {},
       }),
-    ).toThrow('providerKey "user.service" is not registered in providers');
+    ).toThrow('providerKey "user.service" is not registered in providerTokens');
   });
 });

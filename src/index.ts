@@ -1,16 +1,24 @@
 export { DomainBase } from './domain-base';
 export {
-  DomainContextConfig,
-  DomainInjectItemConfig,
-  DomainModuleRegisterInput,
   domainContextConfigSchema,
   domainInjectItemSchema,
   domainModuleRegisterSchema,
 } from './domain-config.schema';
-export {
+export type {
+  DomainContextConfig,
+  DomainInjectItemConfig,
+  DomainModuleRegisterInput,
+} from './domain-config.schema';
+export type {
+  DomainModuleBaseRegisterOptions,
+  DomainModuleLegacyRegisterOptions,
   DomainModuleRegisterOptions,
+  DomainModuleTokenRegisterOptions,
   DomainProviderToken,
+  LegacyDomainProviderMap,
   ParsedDomainModuleRegisterOptions,
+} from './domain-config.parser';
+export {
   parseDomainModuleOptions,
 } from './domain-config.parser';
 export { DomainInject } from './domain-inject.decorator';
