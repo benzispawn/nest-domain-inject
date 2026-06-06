@@ -1,12 +1,12 @@
 import { Inject } from '@nestjs/common';
 
-import { DomainContextConfig } from './domain-config.schema';
+import type { DomainContextConfig } from './domain-config.schema';
 import { createDomainToken } from './domain-token.factory';
 
 export const DOMAIN_INJECT_CONTEXT_METADATA = 'domain:inject:context';
 const APPLIED_CONTEXTS_SYMBOL = Symbol('domain:applied-contexts');
 
-type DomainTarget = abstract new (...args: any[]) => any;
+type DomainTarget = abstract new (...args: unknown[]) => object;
 
 export class DomainRegistry {
   private static readonly contexts = new Map<string, DomainContextConfig>();

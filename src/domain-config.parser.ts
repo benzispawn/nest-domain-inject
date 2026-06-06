@@ -1,20 +1,26 @@
-import type { Type } from '@nestjs/common';
+import type {
+  InjectionToken,
+  ModuleMetadata,
+  Provider,
+} from '@nestjs/common';
 
-import {
-  DomainContextConfig,
-  domainModuleRegisterSchema,
-} from './domain-config.schema';
+import { domainModuleRegisterSchema } from './domain-config.schema';
+import type { DomainContextConfig } from './domain-config.schema';
 
-export type DomainProviderToken = Type<unknown>;
+export type DomainProviderToken = InjectionToken;
 
 export interface DomainModuleRegisterOptions {
   configs: readonly DomainContextConfig[];
-  providers: Record<string, DomainProviderToken>;
+  imports?: ModuleMetadata['imports'];
+  providers?: readonly Provider[];
+  providerTokens: Record<string, DomainProviderToken>;
 }
 
 export interface ParsedDomainModuleRegisterOptions {
   readonly configs: readonly DomainContextConfig[];
-  readonly providers: Readonly<Record<string, DomainProviderToken>>;
+  readonly imports: NonNullable<ModuleMetadata['imports']>;
+  readonly providers: readonly Provider[];
+  readonly providerTokens: Readonly<Record<string, DomainProviderToken>>;
 }
 
 function formatValidationIssues(messages: string[]): Error {
@@ -36,9 +42,20 @@ export function parseDomainModuleOptions(
     throw formatValidationIssues(issues);
   }
 
+  const providersInput = parsed.data.providers;
+  const providerTokens = parsed.data.providerTokens as Record<
+    string,
+    DomainProviderToken
+  >;
+  const providers = (providersInput ?? []) as Provider[];
+  const imports = (parsed.data.imports ?? []) as NonNullable<
+    ModuleMetadata['imports']
+  >;
+
   return {
     configs: parsed.data.configs,
-    providers: parsed.data
-      .providers as Readonly<Record<string, DomainProviderToken>>,
+    imports,
+    providers,
+    providerTokens,
   };
 }

@@ -32,11 +32,23 @@ export const domainModuleRegisterSchema = z.object({
   configs: z.array(domainContextConfigSchema, {
     invalid_type_error: 'configs must be an array',
   }),
-  providers: z.record(z.string(), z.any(), {
-    invalid_type_error: 'providers must be an object map',
+  imports: z
+    .array(z.unknown(), {
+      invalid_type_error: 'imports must be an array',
+    })
+    .optional(),
+  providers: z
+    .array(z.unknown(), {
+      invalid_type_error: 'providers must be an array',
+    })
+    .optional(),
+  providerTokens: z.record(z.string(), z.unknown(), {
+    invalid_type_error: 'providerTokens must be an object map',
+    required_error: 'providerTokens is required',
   }),
 }).superRefine((value, ctx) => {
   const contextSeen = new Set<string>();
+  const providerTokenKeys = new Set(Object.keys(value.providerTokens));
 
   value.configs.forEach((config, configIndex) => {
     if (contextSeen.has(config.context)) {
@@ -59,11 +71,11 @@ export const domainModuleRegisterSchema = z.object({
       }
       propertySeen.add(injectItem.property);
 
-      if (!(injectItem.providerKey in value.providers)) {
+      if (!providerTokenKeys.has(injectItem.providerKey)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['configs', configIndex, 'inject', injectIndex, 'providerKey'],
-          message: `providerKey "${injectItem.providerKey}" is not registered in providers`,
+          message: `providerKey "${injectItem.providerKey}" is not registered in providerTokens`,
         });
       }
     });
@@ -84,5 +96,7 @@ export type DomainContextConfig = Readonly<{
 
 export type DomainModuleRegisterInput = Readonly<{
   configs: readonly DomainContextConfig[];
-  providers: Record<string, unknown>;
+  imports?: readonly unknown[];
+  providers?: readonly unknown[];
+  providerTokens: Record<string, unknown>;
 }>;
