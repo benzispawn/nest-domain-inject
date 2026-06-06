@@ -36,6 +36,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    environment: npm-release
 
     env:
       VERSION: ${{ inputs.version }}
