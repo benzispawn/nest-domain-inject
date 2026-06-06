@@ -53,24 +53,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Configure npm authentication
-        run: |
-          if [ -z "${NODE_AUTH_TOKEN}" ]; then
-            echo "NPM_TOKEN is missing. Add it as a repository or environment secret."
-            exit 1
-          fi
-
-          npm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
-          npm whoami --registry https://registry.npmjs.org
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Validate version input
         run: |
@@ -121,8 +108,6 @@ jobs:
       - name: Dry-run npm publish
         if: env.DRY_RUN == 'true'
         run: npm publish --dry-run --access public --tag "${NPM_TAG}"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Configure git
         if: env.DRY_RUN != 'true'
@@ -149,9 +134,7 @@ jobs:
 
       - name: Publish to npm
         if: env.DRY_RUN != 'true'
-        run: npm publish --access public --tag "${NPM_TAG}" --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --tag "${NPM_TAG}"
 
       - name: Push version commit and tag
         if: env.DRY_RUN != 'true'
