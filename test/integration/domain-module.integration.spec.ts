@@ -149,7 +149,8 @@ describe('DomainModule integration', () => {
       imports: [
         DomainModule.register({
           configs: [usersDomainConfig],
-          providers: {
+          providers: [UserService, UserRepository],
+          providerTokens: {
             'user.service': UserService,
             'user.repository': UserRepository,
           },

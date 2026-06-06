@@ -2,40 +2,19 @@ import type {
   InjectionToken,
   ModuleMetadata,
   Provider,
-  Type,
 } from '@nestjs/common';
 
 import { domainModuleRegisterSchema } from './domain-config.schema';
 import type { DomainContextConfig } from './domain-config.schema';
 
 export type DomainProviderToken = InjectionToken;
-export type LegacyDomainProviderMap = Record<string, Type<unknown>>;
 
-export interface DomainModuleBaseRegisterOptions {
+export interface DomainModuleRegisterOptions {
   configs: readonly DomainContextConfig[];
   imports?: ModuleMetadata['imports'];
-}
-
-export interface DomainModuleLegacyRegisterOptions
-  extends DomainModuleBaseRegisterOptions {
-  providers: LegacyDomainProviderMap;
-  providerTokens?: Record<string, DomainProviderToken>;
-}
-
-export interface DomainModuleTokenRegisterOptions
-  extends DomainModuleBaseRegisterOptions {
-  providers?: readonly unknown[];
+  providers?: readonly Provider[];
   providerTokens: Record<string, DomainProviderToken>;
 }
-
-export type DomainModuleRegisterOptions =
-  | DomainModuleLegacyRegisterOptions
-  | DomainModuleTokenRegisterOptions;
-
-type DomainModuleParserInput = DomainModuleBaseRegisterOptions & {
-  providers?: readonly unknown[] | LegacyDomainProviderMap;
-  providerTokens?: Record<string, DomainProviderToken>;
-};
 
 export interface ParsedDomainModuleRegisterOptions {
   readonly configs: readonly DomainContextConfig[];
@@ -52,9 +31,7 @@ function formatValidationIssues(messages: string[]): Error {
 export function parseDomainModuleOptions(
   input: DomainModuleRegisterOptions,
 ): ParsedDomainModuleRegisterOptions {
-  const parsed = domainModuleRegisterSchema.safeParse(
-    input as DomainModuleParserInput,
-  );
+  const parsed = domainModuleRegisterSchema.safeParse(input);
 
   if (!parsed.success) {
     const issues = parsed.error.issues.map((issue) => {
@@ -66,14 +43,11 @@ export function parseDomainModuleOptions(
   }
 
   const providersInput = parsed.data.providers;
-  const providerTokens = {
-    ...(providersInput && !Array.isArray(providersInput) ? providersInput : {}),
-    ...(parsed.data.providerTokens ?? {}),
-  } as Record<string, DomainProviderToken>;
-
-  const providers = (
-    Array.isArray(providersInput) ? providersInput : Object.values(providersInput ?? {})
-  ) as Provider[];
+  const providerTokens = parsed.data.providerTokens as Record<
+    string,
+    DomainProviderToken
+  >;
+  const providers = (providersInput ?? []) as Provider[];
   const imports = (parsed.data.imports ?? []) as NonNullable<
     ModuleMetadata['imports']
   >;

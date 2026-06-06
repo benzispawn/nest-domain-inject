@@ -2,18 +2,12 @@ import { Module } from '@nestjs/common';
 import type { DynamicModule, Provider } from '@nestjs/common';
 
 import { parseDomainModuleOptions } from './domain-config.parser';
-import type {
-  DomainModuleLegacyRegisterOptions,
-  DomainModuleRegisterOptions,
-  DomainModuleTokenRegisterOptions,
-} from './domain-config.parser';
+import type { DomainModuleRegisterOptions } from './domain-config.parser';
 import { DomainRegistry } from './domain-registry';
 import { createDomainToken } from './domain-token.factory';
 
 @Module({})
 export class DomainModule {
-  static register(options: DomainModuleTokenRegisterOptions): DynamicModule;
-  static register(options: DomainModuleLegacyRegisterOptions): DynamicModule;
   static register(options: DomainModuleRegisterOptions): DynamicModule {
     const parsedOptions = parseDomainModuleOptions(options);
     DomainRegistry.registerContexts(parsedOptions.configs);

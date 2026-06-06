@@ -38,29 +38,17 @@ export const domainModuleRegisterSchema = z.object({
     })
     .optional(),
   providers: z
-    .union([
-      z.array(z.unknown(), {
-        invalid_type_error: 'providers must be an array',
-      }),
-      z.record(z.string(), z.unknown(), {
-        invalid_type_error: 'providers must be an object map',
-      }),
-    ])
-    .optional(),
-  providerTokens: z
-    .record(z.string(), z.unknown(), {
-      invalid_type_error: 'providerTokens must be an object map',
+    .array(z.unknown(), {
+      invalid_type_error: 'providers must be an array',
     })
     .optional(),
+  providerTokens: z.record(z.string(), z.unknown(), {
+    invalid_type_error: 'providerTokens must be an object map',
+    required_error: 'providerTokens is required',
+  }),
 }).superRefine((value, ctx) => {
   const contextSeen = new Set<string>();
-  const providerTokenKeys = new Set(Object.keys(value.providerTokens ?? {}));
-
-  if (value.providers && !Array.isArray(value.providers)) {
-    Object.keys(value.providers).forEach((providerKey) => {
-      providerTokenKeys.add(providerKey);
-    });
-  }
+  const providerTokenKeys = new Set(Object.keys(value.providerTokens));
 
   value.configs.forEach((config, configIndex) => {
     if (contextSeen.has(config.context)) {
@@ -109,6 +97,6 @@ export type DomainContextConfig = Readonly<{
 export type DomainModuleRegisterInput = Readonly<{
   configs: readonly DomainContextConfig[];
   imports?: readonly unknown[];
-  providers?: readonly unknown[] | Record<string, unknown>;
-  providerTokens?: Record<string, unknown>;
+  providers?: readonly unknown[];
+  providerTokens: Record<string, unknown>;
 }>;

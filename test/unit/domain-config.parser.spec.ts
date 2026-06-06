@@ -27,7 +27,8 @@ describe('parseDomainModuleOptions', () => {
           ],
         },
       ],
-      providers: {
+      providers: [UserService, UserRepository],
+      providerTokens: {
         'user.service': UserService,
         'user.repository': UserRepository,
       },
@@ -104,7 +105,8 @@ describe('parseDomainModuleOptions', () => {
             ],
           },
         ],
-        providers: {
+        providers: [UserService, UserRepository],
+        providerTokens: {
           'user.service': UserService,
           'user.repository': UserRepository,
         },
@@ -134,7 +136,8 @@ describe('parseDomainModuleOptions', () => {
             ],
           },
         ],
-        providers: {
+        providers: [UserService, UserRepository],
+        providerTokens: {
           'user.service': UserService,
           'user.repository': UserRepository,
         },
@@ -158,8 +161,30 @@ describe('parseDomainModuleOptions', () => {
             ],
           },
         ],
-        providers: {},
+        providers: [],
+        providerTokens: {},
       }),
     ).toThrow('providerKey "user.service" is not registered in providerTokens');
+  });
+
+  it('fails when providerTokens is missing', () => {
+    expect(() =>
+      parseDomainModuleOptions({
+        configs: [
+          {
+            context: 'users',
+            inject: [
+              {
+                type: 'service',
+                name: 'user',
+                property: 'userService',
+                providerKey: 'user.service',
+              },
+            ],
+          },
+        ],
+        providers: [UserService],
+      } as never),
+    ).toThrow('providerTokens is required');
   });
 });

@@ -10,12 +10,8 @@ export type {
   DomainModuleRegisterInput,
 } from './domain-config.schema';
 export type {
-  DomainModuleBaseRegisterOptions,
-  DomainModuleLegacyRegisterOptions,
   DomainModuleRegisterOptions,
-  DomainModuleTokenRegisterOptions,
   DomainProviderToken,
-  LegacyDomainProviderMap,
   ParsedDomainModuleRegisterOptions,
 } from './domain-config.parser';
 export {
