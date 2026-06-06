@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  Injectable,
-  Module,
-} from '@nestjs/common';
+import { Controller, Get, Inject, Injectable, Module } from '@nestjs/common';
 import type { DynamicModule } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
@@ -15,7 +9,7 @@ import { DomainModule } from '../../src/domain-module';
 @Injectable()
 class UserRepository {
   async getById(id: string): Promise<{ id: string; name: string }> {
-    return { id, name: 'Ada Lovelace' };
+    return await Promise.resolve({ id, name: 'Ada Lovelace' });
   }
 }
 
@@ -24,7 +18,7 @@ class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async getUser(id: string): Promise<{ id: string; name: string }> {
-    return this.userRepository.getById(id);
+    return await this.userRepository.getById(id);
   }
 }
 
@@ -44,7 +38,7 @@ class ConfigurableUserRepository implements UserRepositoryPort {
   constructor(private readonly defaultName: string) {}
 
   async getById(id: string): Promise<{ id: string; name: string }> {
-    return { id, name: this.defaultName };
+    return await Promise.resolve({ id, name: this.defaultName });
   }
 }
 
@@ -56,7 +50,7 @@ class ConfigurableUserService {
   ) {}
 
   async getUser(id: string): Promise<{ id: string; name: string }> {
-    return this.userRepository.getById(id);
+    return await this.userRepository.getById(id);
   }
 }
 
@@ -88,7 +82,7 @@ const usersDomainConfig = {
 class UsersController extends DomainBase<UsersDomain> {
   @Get(':id')
   async getUser(id: string): Promise<{ id: string; name: string }> {
-    return this.$.userService.getUser(id);
+    return await this.$.userService.getUser(id);
   }
 }
 
@@ -97,7 +91,7 @@ class UsersController extends DomainBase<UsersDomain> {
 class ConfigurableUsersController extends DomainBase<ConfigurableUsersDomain> {
   @Get(':id')
   async getUser(id: string): Promise<{ id: string; name: string }> {
-    return this.$.userService.getUser(id);
+    return await this.$.userService.getUser(id);
   }
 }
 
@@ -200,7 +194,8 @@ describe('DomainModule integration', () => {
             ConfigurableUserService,
             {
               provide: USER_REPOSITORY,
-              useFactory: () => new ConfigurableUserRepository('Katherine Johnson'),
+              useFactory: () =>
+                new ConfigurableUserRepository('Katherine Johnson'),
             },
           ],
           providerTokens: {

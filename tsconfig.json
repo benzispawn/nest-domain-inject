@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "commonjs",
+    "module": "nodenext",
     "declaration": true,
     "outDir": "dist",
     "strict": true,
@@ -18,11 +18,13 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
-    "types": ["node"],
-    "lib": ["ES2021"]
+    "types": ["node", "jest"],
+    "lib": ["ES2021"],
+    "noEmit": true,
+    "rootDir": "."
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", "test"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["dist"]
 }

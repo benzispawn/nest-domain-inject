@@ -14,8 +14,13 @@ export class DomainModule {
 
     const aliasProviders = parsedOptions.configs.flatMap((config) =>
       config.inject.map((injectItem) => {
-        const token = createDomainToken(config.context, injectItem.type, injectItem.name);
-        const providerToken = parsedOptions.providerTokens[injectItem.providerKey];
+        const token = createDomainToken(
+          config.context,
+          injectItem.type,
+          injectItem.name,
+        );
+        const providerToken =
+          parsedOptions.providerTokens[injectItem.providerKey];
 
         return {
           provide: token,
