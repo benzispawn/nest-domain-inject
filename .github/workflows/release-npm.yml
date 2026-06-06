@@ -121,8 +121,18 @@ jobs:
         if: env.DRY_RUN != 'true'
         run: |
           git add package.json package-lock.json
-          git commit -m "chore(release): v${VERSION}"
-          git tag "v${VERSION}"
+
+          if git diff --cached --quiet; then
+            echo "No package version files changed; skipping release commit."
+          else
+            git commit -m "chore(release): v${VERSION}"
+          fi
+
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "Tag v${VERSION} already exists locally; skipping tag creation."
+          else
+            git tag "v${VERSION}"
+          fi
 
       - name: Push version commit and tag
         if: env.DRY_RUN != 'true'
