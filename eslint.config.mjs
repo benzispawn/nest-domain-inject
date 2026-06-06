@@ -5,7 +5,7 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['eslint.config.mjs', 'jest.config.cjs', 'dist/**', 'coverage/**', 'node_modules/**'],
+    ignores: ['eslint.config.mjs', '.dependency-cruiser.js', 'jest.config.cjs', 'dist/**', 'coverage/**', 'node_modules/**'],
   },
   ...tseslint.configs['flat/recommended'],
   eslintPluginPrettierRecommended,

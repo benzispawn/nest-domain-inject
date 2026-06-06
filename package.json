@@ -1,6 +1,6 @@
 {
   "name": "@rbenzi/nest-domain-inject",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "NestJS domain injection library with context-based decorators",
   "repository": {
     "type": "git",
@@ -19,7 +19,9 @@
     "typecheck": "tsc -p tsconfig.spec.json --noEmit",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint:fix": "eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix"
+    "lint:fix": "eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
+    "depcruise": "depcruise src --config .dependency-cruiser.js",
+    "depcruise:graph": "depcruise src --config .dependency-cruiser.js --output-type dot | dot -T svg > dependency-graph.svg"
   },
   "peerDependencies": {
     "@nestjs/common": "^10.0.0 || ^11.0.0",
@@ -27,6 +29,7 @@
     "reflect-metadata": "^0.2.0"
   },
   "dependencies": {
+    "dependency-cruiser": "^17.4.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
