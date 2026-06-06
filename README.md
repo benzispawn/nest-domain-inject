@@ -1,11 +1,11 @@
-# nest-domain-inject
+# @rbenzi/nest-domain-inject
 
 A reusable NestJS library that provides context-driven domain property injection using a class decorator.
 
 ## Installation
 
 ```bash
-npm i nest-domain-inject zod
+npm i @rbenzi/nest-domain-inject zod
 ```
 
 Peer dependencies:
@@ -18,7 +18,7 @@ Peer dependencies:
 
 ```ts
 import { Controller, Get, Param } from '@nestjs/common';
-import { DomainBase, DomainInject, DomainModule } from 'nest-domain-inject';
+import { DomainBase, DomainInject, DomainModule } from '@rbenzi/nest-domain-inject';
 
 export const usersDomainConfig = {
   context: 'users',

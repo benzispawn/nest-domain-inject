@@ -1,7 +1,11 @@
 {
   "name": "@rbenzi/nest-domain-inject",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "NestJS domain injection library with context-based decorators",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benzispawn/nest-domain-inject.git"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
