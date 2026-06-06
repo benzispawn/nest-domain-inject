@@ -57,7 +57,10 @@ describe('DomainInject decorator', () => {
     @DomainInject('users')
     class ImmediateTarget {}
 
-    const metadata = Reflect.getMetadata(PROPERTY_DEPS_METADATA, ImmediateTarget);
+    const metadata = Reflect.getMetadata(
+      PROPERTY_DEPS_METADATA,
+      ImmediateTarget,
+    );
     expect(metadata).toEqual(
       expect.arrayContaining([
         {

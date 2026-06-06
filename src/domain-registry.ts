@@ -35,7 +35,8 @@ export class DomainRegistry {
       return;
     }
 
-    const contexts = DomainRegistry.pendingTargets.get(target) ?? new Set<string>();
+    const contexts =
+      DomainRegistry.pendingTargets.get(target) ?? new Set<string>();
     contexts.add(context);
     DomainRegistry.pendingTargets.set(target, contexts);
   }
@@ -68,14 +69,21 @@ export class DomainRegistry {
     return true;
   }
 
-  private static applyContext(target: DomainTarget, config: DomainContextConfig): void {
+  private static applyContext(
+    target: DomainTarget,
+    config: DomainContextConfig,
+  ): void {
     const appliedContexts = DomainRegistry.getAppliedContexts(target);
     if (appliedContexts.has(config.context)) {
       return;
     }
 
     config.inject.forEach((injectItem) => {
-      const token = createDomainToken(config.context, injectItem.type, injectItem.name);
+      const token = createDomainToken(
+        config.context,
+        injectItem.type,
+        injectItem.name,
+      );
       // Reuses Nest property-injection metadata so runtime behavior stays aligned with native @Inject.
       Inject(token)(target.prototype, injectItem.property);
     });

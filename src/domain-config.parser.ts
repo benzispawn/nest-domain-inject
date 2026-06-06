@@ -1,8 +1,4 @@
-import type {
-  InjectionToken,
-  ModuleMetadata,
-  Provider,
-} from '@nestjs/common';
+import type { InjectionToken, ModuleMetadata, Provider } from '@nestjs/common';
 
 import { domainModuleRegisterSchema } from './domain-config.schema';
 import type { DomainContextConfig } from './domain-config.schema';

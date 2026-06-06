@@ -20,9 +20,11 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "types": ["node"],
-    "lib": ["ES2021"]
+    "types": ["node", "jest"],
+    "lib": ["ES2021"],
+    "noEmit": true,
+    "rootDir": "."
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["dist", "test"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["dist"]
 }
